@@ -133,14 +133,6 @@
 //!
 //! impl Actor for BasicActor {
 //!
-//!     fn pre_start(self: &mut Self, ctx: ActorContext) {
-//!         println!("BasicActor is started")
-//!     }
-//!
-//!     fn post_stop(self: &mut Self, ctx: ActorContext) {
-//!         println!("BasicActor is stopped")
-//!     }
-//!
 //!     fn receive(self: &mut Self, msg: &Box<Any + Send>, ctx: ActorContext) -> bool {
 //!         match_downcast_ref!(msg, {
 //!             m: Print => {
@@ -152,6 +144,7 @@
 //!
 //!         true
 //!     }
+//! 
 //! }
 //! ```
 //!
