@@ -1,0 +1,18 @@
+[package]
+name = "seal_rs"
+version = "0.1.0"
+authors = ["Oleg Vyalkin <ovvyalkin@gmail.com>"]
+edition = "2018"
+description = "Set of classic asynchronous primitives (Actors, Executors, Futures / Promises)"
+repository = "https://github.com/Serbis/seal_rs"
+readme = "README.md"
+keywords = ["actor", "future", "promise", "async", "thread"]
+categories = ["asynchronous", "concurrency", "development-tools"]
+license = "MIT"
+
+[dependencies]
+match-downcast = "0.1.2"
+num_cpus = "1.10.0"
+
+[badges]
+maintenance = { status = "experimental" }
