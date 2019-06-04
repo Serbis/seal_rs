@@ -2,7 +2,6 @@
 use crate::actors::actor_cell::ActorCell;
 use crate::actors::envelope::Envelope;
 use crate::actors::mailbox::Mailbox;
-use crate::actors::actor_ref::ActorRef;
 use crate::actors::actor::Actor;
 use crate::common::tsafe::TSafe;
 use std::sync::{Arc};

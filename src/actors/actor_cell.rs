@@ -10,9 +10,11 @@ use crate::actors::mailbox::Mailbox;
 use crate::actors::actor_context::ActorContext;
 use crate::actors::actor::Actor;
 use crate::actors::actor_path::ActorPath;
-use crate::actors::actor_system::ActorSystem;
+use crate::actors::actor_ref_factory::ActorRefFactory;
+use crate::actors::abstract_actor_system::AbstractActorSystem;
 use crate::actors::envelope::Envelope;
-use crate::actors::actor_ref::ActorRef;
+use crate::actors::abstract_actor_ref::AbstractActorRef;
+use crate::actors::local_actor_ref::LocalActorRef;
 use std::sync::{Arc, Mutex};
 use std::any::Any;
 
@@ -37,7 +39,7 @@ pub struct ActorCell {
     pub path: TSafe<ActorPath>,
 
     /// Reference to the actor system
-    pub system: TSafe<ActorSystem>,
+    pub system: TSafe<AbstractActorSystem + Send>,
 
     /// Suspend flag. See the suspend method description for more details
     pub suspended: bool,
@@ -50,7 +52,7 @@ impl ActorCell {
 
     /// Create new actor cell. This is the internal constructor and should never be used in a
     /// user code.
-    pub fn new(system: TSafe<ActorSystem>,
+    pub fn new(system: TSafe<AbstractActorSystem + Send>,
         path: TSafe<ActorPath>,
         actor: TSafe<Actor + Send>,
         bid: u32,
@@ -75,7 +77,7 @@ impl ActorCell {
         self.bid = self.dispatcher.lock().unwrap().obtain_bid();
         //println!("Bid = {}", self.bid);
 
-        let self_ =  ActorRef::new(boxed_self, self.path.clone());
+        let self_ =  Box::new(LocalActorRef::new(boxed_self, self.path.clone()));
         let sender = self.system.lock().unwrap().dead_letters();
         let system = self.system.clone();
 
@@ -88,7 +90,7 @@ impl ActorCell {
     pub fn stop(self: &mut Self, boxed_self: TSafe<ActorCell>) {
         self.stopped = true;
 
-        let self_ =  ActorRef::new(boxed_self, self.path.clone());
+        let self_ =  Box::new(LocalActorRef::new(boxed_self, self.path.clone()));
         let sender = self.system.lock().unwrap().dead_letters();
         let system = self.system.clone();
 
@@ -108,13 +110,13 @@ impl ActorCell {
     pub fn send(self: &mut Self,
                 boxed_self: &TSafe<ActorCell>,
                 msg: Box<Any + Send + 'static>,
-                rself: Option<ActorRef>,
-                to_ref: ActorRef) {
+                rself: Option<Box<AbstractActorRef + Send>>,
+                to_ref: Box<AbstractActorRef + Send>) {
 
         // If cell does not receive new messages, drops message to the deadLetter
         if self.stopped || self.suspended {
-            let dead_letters = self.system.lock().unwrap().dead_letters();
-            dead_letters.cell.lock().unwrap().send(&dead_letters.cell,
+            let mut dead_letters = self.system.lock().unwrap().dead_letters();
+            dead_letters.cell().lock().unwrap().send(&dead_letters.cell(),
                                                    msg, rself,
                                                    to_ref);
         } else {
@@ -137,8 +139,8 @@ impl ActorCell {
     pub fn force_send(self: &mut Self,
                       boxed_self: TSafe<ActorCell>,
                       msg: Box<Any + Send + 'static>,
-                      rself: Option<ActorRef>,
-                      to_ref: ActorRef) {
+                      rself: Option<Box<AbstractActorRef + Send>>,
+                      to_ref: Box<AbstractActorRef + Send>) {
 
         let envelope = Envelope::new(
             msg,

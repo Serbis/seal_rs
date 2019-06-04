@@ -1,7 +1,9 @@
 use crate::actors::actor::Actor;
 use crate::actors::actor_context::ActorContext;
 use crate::actors::props::Props;
-use crate::actors::actor_ref::ActorRef;
+use crate::actors::local_actor_ref::LocalActorRef;
+use crate::actors::abstract_actor_system::AbstractActorSystem;
+use crate::actors::abstract_actor_ref::ActorRef;
 use crate::examples::actors::logger::file_writer;
 use crate::examples::actors::logger::stdout_writer;
 use std::any::Any;

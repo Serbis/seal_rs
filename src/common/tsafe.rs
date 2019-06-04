@@ -1,4 +1,4 @@
-use std::sync::{Mutex, Arc, Condvar};
+use std::sync::{Mutex, Arc};
 
 pub type TSafe<T> = Arc<Mutex<T>>;
 

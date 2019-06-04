@@ -12,11 +12,15 @@ use crate::actors::dead_letters::DeadLetters;
 use crate::actors::synthetic_actor::SyntheticActor;
 use crate::actors::unbound_mailbox::UnboundMailbox;
 use crate::executors::execution_context::ExecutionContext;
-use crate::actors::actor_ref::ActorRef;
+use crate::actors::actor_ref_factory::ActorRefFactory;
+use crate::actors::abstract_actor_system::AbstractActorSystem;
+use crate::actors::local_actor_ref::LocalActorRef;
+use crate::actors::abstract_actor_ref::ActorRef;
 use std::sync::{Arc, Mutex};
+use std::any::Any;
 
 
-pub struct ActorSystem {
+pub struct LocalActorSystem {
     /// Actors ids counter. His is used for set up actor name, if it was not be explicitly specified.
     nids: usize,
 
@@ -29,13 +33,12 @@ pub struct ActorSystem {
     dead_letters: Option<ActorRef>
 }
 
-impl ActorSystem {
-
+impl LocalActorSystem {
     /// Create new actor system protected by TSafe guard.
-    pub fn new() -> TSafe<ActorSystem> {
+    pub fn new() -> TSafe<LocalActorSystem> {
         let cpu_count = num_cpus::get();
         let dispatcher = tsafe!(DefaultDispatcher::new(cpu_count as u32));
-        let mut system = ActorSystem {
+        let mut system = LocalActorSystem {
             nids: 0,
             dispatcher: dispatcher.clone(),
             dead_letters: None
@@ -50,11 +53,21 @@ impl ActorSystem {
         let boxed_dlc = tsafe!(dlc);
 
 
-        system.lock().unwrap().dead_letters = Some(ActorRef::new(boxed_dlc.clone(), dlp));
+        system.lock().unwrap().dead_letters = Some(Box::new(LocalActorRef::new(boxed_dlc.clone(), dlp)));
         boxed_dlc.lock().unwrap().start(boxed_dlc.clone());
 
         system
     }
+
+    /// Runs the actor system
+    pub fn run(self: &mut Self) {
+        self.dispatcher.lock().unwrap().run();
+    }
+}
+
+impl ActorRefFactory for LocalActorSystem {
+
+
 
     /// Creates the new actor from specified Props object and with specified name. If name does not
     /// explicitly specified, it will be generate automatically.
@@ -65,7 +78,7 @@ impl ActorSystem {
     ///
     /// ```
     ///
-    pub fn actor_of(self: &mut Self, props: Props, name: Option<&str>) -> ActorRef {
+    fn actor_of(self: &mut Self, props: Props, name: Option<&str>) -> ActorRef {
         let mailbox = tsafe!(UnboundMailbox::new());
 
         let mut aname: String;
@@ -91,7 +104,7 @@ impl ActorSystem {
 
         boxed_cell.lock().unwrap().start(boxed_cell.clone());
 
-        ActorRef::new(boxed_cell, path)
+        Box::new(LocalActorRef::new(boxed_cell, path))
     }
 
     /// Stop specified actor by it's reference. Suspends actor, cancels all timers, cleans mailbox
@@ -105,41 +118,44 @@ impl ActorSystem {
     /// ```
     ///
     /// ```
-    pub fn stop(self: &mut Self, aref: &ActorRef) {
+    fn stop(self: &mut Self, aref: &mut ActorRef) {
         // Attention, identical code exists in the PoisonPill handler
         let aref_cpy0 = aref.clone();
         let aref_cpy1 = aref.clone();
-        let mut cell = aref.cell.lock().unwrap();
+        let x = aref.cell();
+        let mut cell = x.lock().unwrap();
         cell.suspend();
         // +++ cell.actor.timers().cancelAll();
         cell.mailbox.lock().unwrap().clean_up(aref_cpy0, self.dead_letters());
-        cell.force_send(aref.cell.clone(), Box::new(PoisonPill {}), None, aref_cpy1);
-    }
-
-
-    /// Runs the actor system
-    pub fn run(self: &mut Self) {
-        self.dispatcher.lock().unwrap().run();
+        cell.force_send(aref.cell().clone(), Box::new(PoisonPill {}), None, aref_cpy1);
     }
 
     /// Return deadLetter actor reference
-    pub fn dead_letters(self: &mut Self) -> ActorRef {
+    fn dead_letters(self: &mut Self) -> ActorRef {
         match &self.dead_letters {
             Some(d) =>  {
-                d.clone()
+                (*d).clone()
             }
             _ => panic!("Dead letter is empty")
         }
     }
 }
 
-impl Clone for ActorSystem {
+impl AbstractActorSystem for LocalActorSystem {
+
+}
+
+impl Clone for LocalActorSystem {
     fn clone(&self) -> Self {
 
-        ActorSystem {
+        let dead_letter: Option<ActorRef> = match &self.dead_letters {
+            Some(v) => Some((*v).clone()),
+            None => None
+        };
+        LocalActorSystem {
             nids: self.nids,
             dispatcher: self.dispatcher.clone(),
-            dead_letters: self.dead_letters.clone()
+            dead_letters: dead_letter //self.dead_letters.clone()
         }
     }
 }

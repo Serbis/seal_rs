@@ -4,7 +4,7 @@
 //!
 use crate::actors::mailbox::Mailbox;
 use crate::actors::envelope::Envelope;
-use crate::actors::actor_ref::ActorRef;
+use crate::actors::abstract_actor_ref::AbstractActorRef;
 
 pub struct DeadLetters {
     is_planned: bool
@@ -35,9 +35,9 @@ impl Mailbox for DeadLetters {
         let mut actor_name = "outside".to_string();
 
         if envelope.sender.is_some() {
-            let sender =  &envelope.sender.unwrap();
+            let sender =  &mut envelope.sender.unwrap();
             let sender_path = {
-                sender.path.lock().unwrap().name.clone()
+                sender.path().name.clone()
             };
             if sender_path != "deadLetters" {
                 actor_name = sender.to_string();
@@ -59,5 +59,5 @@ impl Mailbox for DeadLetters {
     }
 
     /// Do nothing
-    fn clean_up(self: &mut Self, sender: ActorRef, dead_letters: ActorRef) {}
+    fn clean_up(self: &mut Self, sender: Box<AbstractActorRef>, dead_letters: Box<AbstractActorRef>) {}
 }

@@ -9,6 +9,9 @@ pub trait Actor {
     fn pre_start(self: &mut Self, ctx: ActorContext) {}
     fn post_stop(self: &mut Self, ctx: ActorContext) {}
     fn receive(self: &mut Self, msg: &Box<Any + Send>, ctx: ActorContext) -> bool;
+    fn as_any(self: &Self) -> &Any {
+        panic!()
+    }
 }
 
 /// Service message. Stops the actor which will receive him. See  actors lifetime management

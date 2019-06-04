@@ -1,24 +1,24 @@
 //! Message processing context
 //!
 //! This object will constructs for each new message received by an actor
-use crate::actors::actor_ref::ActorRef;
-use crate::actors::actor_system::ActorSystem;
+use crate::actors::abstract_actor_system::AbstractActorSystem;
+use crate::actors::abstract_actor_ref::AbstractActorRef;
 use crate::common::tsafe::TSafe;
 
 pub struct ActorContext {
 
     /// Who send the current message
-    pub sender: ActorRef,
+    pub sender: Box<AbstractActorRef + Send>,
 
     /// Own actor reference
-    pub self_: ActorRef,
+    pub self_: Box<AbstractActorRef + Send>,
 
     /// Actor system where actor is work
-    pub system: TSafe<ActorSystem>
+    pub system: TSafe<AbstractActorSystem + Send>
 }
 
 impl ActorContext {
-    pub fn new(sender: ActorRef, self_: ActorRef, system: TSafe<ActorSystem>) -> ActorContext {
+    pub fn new(sender: Box<AbstractActorRef + Send>, self_: Box<AbstractActorRef + Send>, system: TSafe<AbstractActorSystem + Send>) -> ActorContext {
         ActorContext {
             sender,
             self_,

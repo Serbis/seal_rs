@@ -2,7 +2,8 @@
 use crate::executors::execution_context::{ExecutionContext, ExecutorTask};
 use crate::actors::dispatcher::Dispatcher;
 use crate::actors::actor_cell::ActorCell;
-use crate::actors::actor_ref::ActorRef;
+use crate::actors::local_actor_ref::LocalActorRef;
+use crate::actors::abstract_actor_ref::AbstractActorRef;
 use crate::actors::actor_context::ActorContext;
 use crate::actors::envelope::Envelope;
 use crate::actors::mailbox::Mailbox;
@@ -17,7 +18,7 @@ use std::any::Any;
 
 
 pub type AsyncBlockQueue = VecDeque<ExecutorTask>;
-
+//TODO нужно заменить все Mutex это возможно на RwLock
 pub struct DefaultDispatcher {
     dv: i32,
     t_count: u32,
@@ -46,7 +47,7 @@ impl DefaultDispatcher {
         if envelope.is_some() {
             let envelope = envelope.unwrap();
 
-            let sender = {
+            let sender: Box<AbstractActorRef + Send> = {
                 if envelope.sender.is_some() {
                     envelope.sender.unwrap()
                 } else {
@@ -55,6 +56,7 @@ impl DefaultDispatcher {
                     dead_letters
                 }
             };
+
 
             let msg = envelope.message;
 
@@ -70,7 +72,7 @@ impl DefaultDispatcher {
                         let dead_letters = system.dead_letters();
                         dead_letters
                     };
-                    dead_letters.cell.lock().unwrap().send(&dead_letters.cell, msg, Some(sender), envelope.receiver );
+                    dead_letters.cell().lock().unwrap().send(&dead_letters.cell(), msg, Some(sender), envelope.receiver );
 
                 }
             }
@@ -86,7 +88,7 @@ impl DefaultDispatcher {
             cell_u.suspend();
             // +++ cell.actor.timers().cancelAll();
             let dead_letters = cell_u.system.lock().unwrap().dead_letters();
-            mailbox.lock().unwrap().clean_up(ActorRef::new(cell.clone(), cell_u.path.clone()), dead_letters);
+            mailbox.lock().unwrap().clean_up(Box::new(LocalActorRef::new(cell.clone(), cell_u.path.clone())), dead_letters);
             cell_u.stop(cell.clone());
         } else {
             return false
