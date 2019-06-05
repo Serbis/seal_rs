@@ -1,6 +1,6 @@
 [package]
 name = "seal_rs"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["Oleg Vyalkin <ovvyalkin@gmail.com>"]
 edition = "2018"
 description = "Set of classic asynchronous primitives (Actors, Executors, Futures / Promises)"
@@ -15,6 +15,7 @@ match-downcast = "0.1.2"
 num_cpus = "1.10.0"
 timer = "0.2.0"
 chrono = "0.4"
+rand = "0.6.5"
 
 [badges]
 maintenance = { status = "experimental" }

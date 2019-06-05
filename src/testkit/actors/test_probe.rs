@@ -321,7 +321,7 @@ impl TestProbe {
                     continue;
                 }
 
-                let mut all_ok = false;
+                //let mut all_ok = false;
 
                 for r in internal_results.iter() {
                     if r.unwrap() == false {
@@ -343,7 +343,7 @@ impl TestProbe {
         //*self.match_result.lock().unwrap() = None;
 
         // Set 'all' matcher
-        *self.matchers.lock().unwrap() = vec![matcher! { v => true }];
+        *self.matchers.lock().unwrap() = vec![matcher! { _v => true }];
         *self.match_results.lock().unwrap() = vec![Some(false)];
 
         // Start timer
@@ -413,7 +413,7 @@ impl TestProbeActor {
         actor_may_work: TSafe<bool>,
         last_sender: TSafe<ActorRef>) -> TestProbeActor {
 
-        let test_matcher = |v: &Box<Any + Send>| {
+        let _test_matcher = |_v: &Box<Any + Send>| {
             true
         };
         TestProbeActor {

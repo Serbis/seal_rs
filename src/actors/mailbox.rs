@@ -4,7 +4,7 @@
 //!
 use crate::actors::envelope::Envelope;
 use crate::actors::abstract_actor_ref::AbstractActorRef;
-
+//TODO нужно переделать mailbox, так как блокироваться должно очередь внутри него а не сам объект. При текущем варинте невозможно реализация блокирующих ящиков.
 pub trait Mailbox {
 
     /// Set scheduled marker. This marker indicates than messages from this mailbox was planned for

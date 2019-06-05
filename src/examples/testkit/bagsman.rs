@@ -5,7 +5,6 @@ use crate::actors::abstract_actor_ref::ActorRef;
 use crate::examples::actors::logger::logger;
 use std::any::Any;
 use std::sync::{Mutex, Arc};
-use std::fs;
 use match_downcast::*;
 
 
@@ -109,16 +108,11 @@ impl Actor for BagsMan {
 #[cfg(test)]
 mod tests {
     use crate::testkit::actors::test_local_actor_ref::TestLocalActorRef;
-    use crate::actors::abstract_actor_ref::ActorRef;
-    use crate::actors::local_actor_system::LocalActorSystem;
     use crate::testkit::actors::test_local_actor_system::TestLocalActorSystem;
-    use crate::testkit::actors::test_local_actor_ref;
     use crate::actors::actor_ref_factory::ActorRefFactory;
     use crate::actors::abstract_actor_ref::AbstractActorRef;
     use crate::examples::actors::logger::logger;
-    use crate::common::tsafe::TSafe;
     use std::any::Any;
-    use std::thread;
     use std::time::Duration;
     use super::*;
 

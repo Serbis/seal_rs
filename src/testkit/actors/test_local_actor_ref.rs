@@ -10,7 +10,6 @@ use crate::actors::actor_cell::ActorCell;
 use crate::actors::abstract_actor_ref::{ActorRef, AbstractActorRef};
 use crate::actors::actor_path::ActorPath;
 use crate::actors::actor::Actor;
-use std::sync::{Mutex, Arc};
 use std::fmt;
 use std::any::Any;
 
@@ -102,7 +101,7 @@ impl fmt::Display for TestLocalActorRef {
 }*/
 
 impl PartialEq for TestLocalActorRef {
-    fn eq(&self, other: &Self) -> bool {
+    fn eq(&self, _other: &Self) -> bool {
         true
         //self.path == other.path
     }

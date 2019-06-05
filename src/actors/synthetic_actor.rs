@@ -8,7 +8,7 @@ use crate::actors::actor_context::ActorContext;
 pub struct SyntheticActor {}
 
 impl Actor for SyntheticActor {
-    fn receive(self: &mut Self, msg: &Box<Any + Send>, ctx: ActorContext) -> bool {
+    fn receive(self: &mut Self, _msg: &Box<Any + Send>, _ctx: ActorContext) -> bool {
         unimplemented!()
     }
 }

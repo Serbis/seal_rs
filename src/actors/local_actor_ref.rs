@@ -87,7 +87,7 @@ impl fmt::Display for LocalActorRef {
 }*/
 
 impl PartialEq for LocalActorRef {
-    fn eq(&self, other: &Self) -> bool {
+    fn eq(&self, _other: &Self) -> bool {
         true
         //self.path == other.path
     }

@@ -7,7 +7,6 @@
 
 use crate::common::tsafe::TSafe;
 use crate::actors::props::Props;
-use crate::actors::dispatcher::Dispatcher;
 use crate::actors::actor_path::ActorPath;
 use crate::actors::actor_cell::ActorCell;
 use crate::actors::actor::PoisonPill;
@@ -15,14 +14,12 @@ use crate::actors::default_dispatcher::DefaultDispatcher;
 use crate::actors::dead_letters::DeadLetters;
 use crate::actors::synthetic_actor::SyntheticActor;
 use crate::actors::unbound_mailbox::UnboundMailbox;
-use crate::executors::execution_context::ExecutionContext;
 use crate::actors::actor_ref_factory::ActorRefFactory;
 use crate::actors::abstract_actor_system::AbstractActorSystem;
 use crate::testkit::actors::test_local_actor_ref::TestLocalActorRef;
 use crate::testkit::actors::test_probe::TestProbe;
 use crate::actors::abstract_actor_ref::ActorRef;
 use std::sync::{Arc, Mutex};
-use std::any::Any;
 
 //TODO способ проверки создания актора можно реализовать через expect_actor_creation. В нем выставляется специальный флаг с рефом, который будет возвращщен после следующего вызова actor_of
 pub struct TestLocalActorSystem {
@@ -44,7 +41,7 @@ impl TestLocalActorSystem {
         // ------- mirror ---------
         let cpu_count = num_cpus::get();
         let mut dispatcher = DefaultDispatcher::new(cpu_count as u32);
-        dispatcher.run();
+        //dispatcher.run();
         let dispatcher = tsafe!(dispatcher);
         let mut system = TestLocalActorSystem {
             nids: 0,

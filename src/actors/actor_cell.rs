@@ -10,12 +10,10 @@ use crate::actors::mailbox::Mailbox;
 use crate::actors::actor_context::ActorContext;
 use crate::actors::actor::Actor;
 use crate::actors::actor_path::ActorPath;
-use crate::actors::actor_ref_factory::ActorRefFactory;
 use crate::actors::abstract_actor_system::AbstractActorSystem;
 use crate::actors::envelope::Envelope;
 use crate::actors::abstract_actor_ref::AbstractActorRef;
 use crate::actors::local_actor_ref::LocalActorRef;
-use std::sync::{Arc, Mutex};
 use std::any::Any;
 
 
@@ -30,7 +28,7 @@ pub struct ActorCell {
     /// Executor asynchronous block id. Actually this value represents the thread id, on
     /// the actor messages will processed. See default_dispatcher for more info about actor's
     /// async mechanics.
-    pub bid: u32,
+    pub bid: usize,
 
     /// Object which extends the actor trait and contain application logic
     pub actor: TSafe<Actor + Send>,
@@ -55,7 +53,7 @@ impl ActorCell {
     pub fn new(system: TSafe<AbstractActorSystem + Send>,
         path: TSafe<ActorPath>,
         actor: TSafe<Actor + Send>,
-        bid: u32,
+        bid: usize,
         dispatcher: TSafe<Dispatcher + Send>,
         mailbox: TSafe<Mailbox + Send>) -> ActorCell {
 

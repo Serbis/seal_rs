@@ -3,7 +3,6 @@
 
 use crate::common::tsafe::TSafe;
 use crate::actors::props::Props;
-use crate::actors::dispatcher::Dispatcher;
 use crate::actors::actor_path::ActorPath;
 use crate::actors::actor_cell::ActorCell;
 use crate::actors::actor::PoisonPill;
@@ -11,13 +10,11 @@ use crate::actors::default_dispatcher::DefaultDispatcher;
 use crate::actors::dead_letters::DeadLetters;
 use crate::actors::synthetic_actor::SyntheticActor;
 use crate::actors::unbound_mailbox::UnboundMailbox;
-use crate::executors::execution_context::ExecutionContext;
 use crate::actors::actor_ref_factory::ActorRefFactory;
 use crate::actors::abstract_actor_system::AbstractActorSystem;
 use crate::actors::local_actor_ref::LocalActorRef;
 use crate::actors::abstract_actor_ref::ActorRef;
 use std::sync::{Arc, Mutex};
-use std::any::Any;
 
 
 pub struct LocalActorSystem {
@@ -58,12 +55,9 @@ impl LocalActorSystem {
 
         system
     }
-
-    /// Runs the actor system
-    pub fn run(self: &mut Self) {
-        self.dispatcher.lock().unwrap().run();
-    }
 }
+
+//TODO у всех ActorSystem убрать метод run
 
 impl ActorRefFactory for LocalActorSystem {
 

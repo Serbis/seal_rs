@@ -1,7 +1,4 @@
-use crate::actors::local_actor_ref::LocalActorRef;
 use crate::actors::actor_ref_factory::ActorRefFactory;
-use crate::actors::abstract_actor_ref::AbstractActorRef;
-use std::any::Any;
 
 //TODO docs
 pub trait AbstractActorSystem: ActorRefFactory {

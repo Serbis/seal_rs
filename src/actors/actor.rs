@@ -6,8 +6,8 @@ use crate::actors::actor_context::ActorContext;
 use std::any::Any;
 
 pub trait Actor {
-    fn pre_start(self: &mut Self, ctx: ActorContext) {}
-    fn post_stop(self: &mut Self, ctx: ActorContext) {}
+    fn pre_start(self: &mut Self, _ctx: ActorContext) {}
+    fn post_stop(self: &mut Self, _ctx: ActorContext) {}
     fn receive(self: &mut Self, msg: &Box<Any + Send>, ctx: ActorContext) -> bool;
     fn as_any(self: &Self) -> &Any {
         panic!()

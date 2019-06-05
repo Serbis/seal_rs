@@ -1,3 +1,7 @@
+# 0.3.0
+
+Realized ThreadPinnedExecutor.
+
 # 0.2.0
 
 Realized basic features of actor's testkit.

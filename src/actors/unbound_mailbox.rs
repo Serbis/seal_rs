@@ -7,7 +7,6 @@
 use crate::actors::mailbox::Mailbox;
 use crate::actors::envelope::Envelope;
 use std::collections::vec_deque::VecDeque;
-use crate::actors::local_actor_ref::LocalActorRef;
 use crate::actors::abstract_actor_ref::AbstractActorRef;
 
 pub struct UnboundMailbox {

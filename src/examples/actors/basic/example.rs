@@ -1,23 +1,9 @@
-use crate::actors::default_dispatcher::DefaultDispatcher;
-use crate::actors::dispatcher::Dispatcher;
-use crate::actors::actor_cell::ActorCell;
-use crate::actors::props::Props;
-use crate::actors::unbound_mailbox::UnboundMailbox;
-use crate::actors::actor_path::ActorPath;
 use crate::actors::local_actor_system::LocalActorSystem;
 use crate::actors::actor_ref_factory::ActorRefFactory;
-use crate::actors::envelope::Envelope;
 use crate::examples::actors::basic::basic_actor;
-use crate::common::tsafe::TSafe;
-use crate::executors::execution_context::ExecutionContext;
-use std::thread;
-use std::sync::{Mutex, Arc};
-use std::rc::Rc;
-use std::time::Duration;
 
 pub fn run() {
     let mut system = LocalActorSystem::new();
-    system.lock().unwrap().run();
 
     let mut printer = system.lock().unwrap()
         .actor_of(basic_actor::props(), Some("printer"));

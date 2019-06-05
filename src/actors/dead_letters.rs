@@ -21,7 +21,7 @@ impl DeadLetters {
 impl Mailbox for DeadLetters {
 
     /// He is always planned. This is needed for prevent scheduling of the mailbox
-    fn set_planned(self: &mut Self, planned: bool) {
+    fn set_planned(self: &mut Self, _planned: bool) {
         self.is_planned = true;
     }
 
@@ -59,5 +59,5 @@ impl Mailbox for DeadLetters {
     }
 
     /// Do nothing
-    fn clean_up(self: &mut Self, sender: Box<AbstractActorRef>, dead_letters: Box<AbstractActorRef>) {}
+    fn clean_up(self: &mut Self, _sender: Box<AbstractActorRef>, _dead_letters: Box<AbstractActorRef>) {}
 }

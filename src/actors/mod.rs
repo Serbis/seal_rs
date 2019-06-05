@@ -152,7 +152,6 @@
 //!
 //! ```
 //! let mut system = LocalActorSystem::new();
-//! system.lock().unwrap().run();
 //!
 //! let mut printer = system.lock().unwrap()
 //!     .actor_of(basic_actor::props(), Some("printer"));
@@ -162,9 +161,7 @@
 //! ```
 //!
 //! At first line, we create new actor system. Internally, this operation creates default dispatcher
-//! and DeadLetter synthetic actor. Next, we run the actor system. This operation internally run the
-//! default dispatcher. If you try perform some operations with not started actor system, it will
-//! cause to panic. Should pay attention on the following fact. ActorSystem have type
+//! and DeadLetter synthetic actor. Should pay attention on the following fact. ActorSystem have type
 //! TSafe<LocalActorSystem>. TSafe is macro which expands to Arc<Mutex\<T\>>. Last is the standard rust
 //! thread safe shared pointer. This fact means for as, that we will mast lock this pointer before
 //! use it. Omissions in the logic of the this pointers unlocking, when we use in outside of the
@@ -341,7 +338,6 @@
 //!
 //! ```
 //! let mut system = LocalActorSystem::new();
-//! system.lock().unwrap().run();
 //!
 //! let mut logger =  {
 //!     let mut system = system.lock().unwrap();

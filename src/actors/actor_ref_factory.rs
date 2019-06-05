@@ -1,7 +1,5 @@
 use crate::actors::props::Props;
 use crate::actors::abstract_actor_ref::ActorRef;
-use crate::actors::abstract_actor_ref::AbstractActorRef;
-use std::any::Any;
 
 //TODO docs
 pub trait ActorRefFactory {

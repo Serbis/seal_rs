@@ -1,27 +1,11 @@
-use crate::actors::default_dispatcher::DefaultDispatcher;
-use crate::actors::dispatcher::Dispatcher;
-use crate::actors::actor_cell::ActorCell;
-use crate::actors::props::Props;
-use crate::actors::unbound_mailbox::UnboundMailbox;
-use crate::actors::actor_path::ActorPath;
 use crate::actors::local_actor_system::LocalActorSystem;
-use crate::actors::abstract_actor_ref::AbstractActorRef;
 use crate::actors::actor_ref_factory::ActorRefFactory;
-use crate::actors::local_actor_ref::LocalActorRef;
-use crate::actors::envelope::Envelope;
 use crate::examples::actors::logger::logger;
 use crate::examples::actors::logger::stdout_writer;
 use crate::examples::actors::logger::file_writer;
-use crate::common::tsafe::TSafe;
-use crate::executors::execution_context::ExecutionContext;
-use std::thread;
-use std::sync::{Mutex, Arc};
-use std::rc::Rc;
-use std::time::Duration;
 
 pub fn run() {
     let mut system = LocalActorSystem::new();
-    system.lock().unwrap().run();
 
     let mut logger =  {
         let mut system = system.lock().unwrap();
