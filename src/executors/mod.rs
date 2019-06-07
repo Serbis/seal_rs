@@ -2,7 +2,7 @@
 //!
 //! # Table of Contents
 //! 1. [Introduction](#introduction)
-//! 1. [ThreadPinnedExecutor](#threadpinnedexecutor)
+//! 2. [ThreadPinnedExecutor](#threadpinnedexecutor)
 //!
 //! # Introduction
 //!
